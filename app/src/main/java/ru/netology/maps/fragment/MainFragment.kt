@@ -12,11 +12,15 @@ import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.layers.ObjectEvent
 import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.map.InputListener
 import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
+import com.yandex.runtime.image.ImageProvider
+import ru.netology.maps.R
 import ru.netology.maps.databinding.FragmentMainBinding
 
 class MainFragment : Fragment(), UserLocationObjectListener {
@@ -24,21 +28,42 @@ class MainFragment : Fragment(), UserLocationObjectListener {
     private lateinit var mapView: MapView
     private lateinit var userLocationLayer: UserLocationLayer
     private lateinit var mapKit: MapKit
+    private lateinit var map: Map
+    private lateinit var placeMarkMapObject: PlacemarkMapObject
+    private lateinit var imageProvider: ImageProvider
+
+
+    private val inputListener = object : InputListener {
+        override fun onMapLongTap(map: Map, point: Point) {
+            // Create placeMark after long tap
+            placeMarkMapObject.geometry = point
+            placeMarkMapObject.setIcon(imageProvider)
+        }
+
+        override fun onMapTap(map: Map, point: Point) = Unit
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMainBinding.inflate(inflater, container, false)
+
         mapView = binding.mapView
         mapKit = MapKitFactory.getInstance()
         userLocationLayer = mapKit.createUserLocationLayer(mapView.mapWindow)
+        map = mapView.map
+        imageProvider = ImageProvider.fromResource(requireContext(), R.drawable.ic_add_location_24)
+        placeMarkMapObject = mapView.map.mapObjects.addPlacemark()
 
         mapView.map.move(
             CameraPosition(Point(0.0, 0.0), 14f, 0f, 0f),
             Animation(Animation.Type.SMOOTH, 2f),
             Map.CameraCallback { }
         )
+
+        map.addInputListener(inputListener)
+
 
         mapKit.resetLocationManagerToDefault()
         userLocationLayer.isVisible = true

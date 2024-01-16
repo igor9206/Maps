@@ -42,7 +42,7 @@ dependencies {
 
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
     implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
-    implementation("com.yandex.android:maps.mobile:4.4.0-lite")
+    implementation("com.yandex.android:maps.mobile:4.4.0-full")
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
 

@@ -15,10 +15,19 @@ import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.InputListener
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.map.PlacemarkMapObject
+import com.yandex.mapkit.map.TextStyle
 import com.yandex.mapkit.mapview.MapView
+import com.yandex.mapkit.search.Response
+import com.yandex.mapkit.search.SearchFactory
+import com.yandex.mapkit.search.SearchManager
+import com.yandex.mapkit.search.SearchManagerType
+import com.yandex.mapkit.search.SearchOptions
+import com.yandex.mapkit.search.SearchType
+import com.yandex.mapkit.search.Session.SearchListener
 import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
+import com.yandex.runtime.Error
 import com.yandex.runtime.image.ImageProvider
 import ru.netology.maps.R
 import ru.netology.maps.databinding.FragmentMainBinding
@@ -31,6 +40,8 @@ class MainFragment : Fragment(), UserLocationObjectListener {
     private lateinit var map: Map
     private lateinit var placeMarkMapObject: PlacemarkMapObject
     private lateinit var imageProvider: ImageProvider
+    private lateinit var searchManager: SearchManager
+    private lateinit var searchOptions: SearchOptions
 
 
     private val inputListener = object : InputListener {
@@ -38,9 +49,34 @@ class MainFragment : Fragment(), UserLocationObjectListener {
             // Create placeMark after long tap
             placeMarkMapObject.geometry = point
             placeMarkMapObject.setIcon(imageProvider)
+            searchPoint(point)
         }
 
         override fun onMapTap(map: Map, point: Point) = Unit
+    }
+
+    private val searchSessionListener = object : SearchListener {
+        override fun onSearchResponse(response: Response) {
+            val text = when {
+//                response.collection.children.firstOrNull()?.obj?.name != null -> response.collection.children.firstOrNull()?.obj?.name
+                response.collection.children.firstOrNull()?.obj?.descriptionText != null -> response.collection.children.firstOrNull()?.obj?.descriptionText
+                response.metadata.toponym?.name != null -> response.metadata.toponym?.name
+                else -> {
+                    "Unknown object"
+                }
+            }
+
+            placeMarkMapObject.setText(
+                text.toString(), TextStyle().apply {
+                    placement = TextStyle.Placement.BOTTOM
+                }
+            )
+        }
+
+        override fun onSearchError(error: Error) {
+            println(error.toString())
+        }
+
     }
 
     override fun onCreateView(
@@ -57,12 +93,20 @@ class MainFragment : Fragment(), UserLocationObjectListener {
         placeMarkMapObject = mapView.map.mapObjects.addPlacemark()
 
         mapView.map.move(
-            CameraPosition(Point(0.0, 0.0), 14f, 0f, 0f),
+            CameraPosition(Point(), 14f, 0f, 0f),
             Animation(Animation.Type.SMOOTH, 2f),
             Map.CameraCallback { }
         )
 
         map.addInputListener(inputListener)
+
+
+        searchManager =
+            SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
+        searchOptions = SearchOptions().apply {
+            searchTypes = SearchType.BIZ.value
+            resultPageSize = 1
+        }
 
 
         mapKit.resetLocationManagerToDefault()
@@ -97,5 +141,13 @@ class MainFragment : Fragment(), UserLocationObjectListener {
     override fun onObjectUpdated(p0: UserLocationView, p1: ObjectEvent) {
     }
 
+    private fun searchPoint(point: Point) {
+        searchManager.submit(
+            point,
+            14,
+            searchOptions,
+            searchSessionListener
+        )
+    }
 
 }

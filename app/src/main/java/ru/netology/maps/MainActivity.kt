@@ -5,6 +5,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import com.yandex.mapkit.MapKitFactory
 import ru.netology.maps.databinding.ActivityMainBinding
 import ru.netology.maps.viewmodel.PlaceMarkViewModel

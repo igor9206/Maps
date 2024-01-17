@@ -46,6 +46,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
 
+    implementation("androidx.activity:activity-ktx:1.8.2")
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")

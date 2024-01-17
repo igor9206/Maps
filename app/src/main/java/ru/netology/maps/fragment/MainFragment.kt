@@ -147,7 +147,6 @@ class MainFragment : Fragment(), UserLocationObjectListener {
             findNavController().navigate(R.id.action_mainFragment_to_placeMarkFragment)
         }
 
-
         return binding.root
     }
 

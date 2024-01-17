@@ -12,11 +12,21 @@
         tools:layout="@layout/fragment_main" >
         <action
             android:id="@+id/action_mainFragment_to_placeMarkFragment"
-            app:destination="@id/placeMarkFragment" />
+            app:destination="@id/placeMarkFragment"
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         android:id="@+id/placeMarkFragment"
         android:name="ru.netology.maps.fragment.PlaceMarkFragment"
         android:label="fragment_place_mark"
-        tools:layout="@layout/fragment_place_mark" />
+        tools:layout="@layout/fragment_place_mark" >
+        <action
+            android:id="@+id/action_placeMarkFragment_to_editPlaceMarkFragment"
+            app:destination="@id/editPlaceMarkFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editPlaceMarkFragment"
+        android:name="ru.netology.maps.fragment.EditPlaceMarkFragment"
+        android:label="fragment_edit_place_mark"
+        tools:layout="@layout/fragment_edit_place_mark" />
 </navigation>

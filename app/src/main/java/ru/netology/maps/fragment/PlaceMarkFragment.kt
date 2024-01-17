@@ -5,8 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import ru.netology.maps.R
 import ru.netology.maps.adapter.OnInteractionListener
 import ru.netology.maps.adapter.PlaceMarkAdapter
@@ -31,6 +33,11 @@ class PlaceMarkFragment : Fragment() {
             }
 
             override fun edit(placeMark: PlaceMark) {
+                viewModel.edit(placeMark.id)
+                findNavController().navigate(
+                    R.id.action_placeMarkFragment_to_editPlaceMarkFragment,
+                    bundleOf("name" to placeMark.name)
+                )
             }
 
             override fun openCardPost(placeMark: PlaceMark) {
@@ -43,7 +50,12 @@ class PlaceMarkFragment : Fragment() {
             adapter.submitList(it)
         }
 
+        binding.backButton.setOnClickListener {
+            findNavController().navigateUp()
+        }
+
         return binding.root
     }
+
 
 }

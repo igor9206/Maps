@@ -5,7 +5,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKit
 import com.yandex.mapkit.MapKitFactory
@@ -31,6 +35,8 @@ import com.yandex.runtime.Error
 import com.yandex.runtime.image.ImageProvider
 import ru.netology.maps.R
 import ru.netology.maps.databinding.FragmentMainBinding
+import ru.netology.maps.dto.PlaceMark
+import ru.netology.maps.viewmodel.PlaceMarkViewModel
 
 class MainFragment : Fragment(), UserLocationObjectListener {
     private lateinit var binding: FragmentMainBinding
@@ -43,13 +49,18 @@ class MainFragment : Fragment(), UserLocationObjectListener {
     private lateinit var searchManager: SearchManager
     private lateinit var searchOptions: SearchOptions
 
+    private val viewModel: PlaceMarkViewModel by activityViewModels()
 
     private val inputListener = object : InputListener {
         override fun onMapLongTap(map: Map, point: Point) {
             // Create placeMark after long tap
             placeMarkMapObject.geometry = point
             placeMarkMapObject.setIcon(imageProvider)
+            placeMarkMapObject.isVisible = true
             searchPoint(point)
+            binding.latitude.text = point.latitude.toString()
+            binding.longitude.text = point.longitude.toString()
+            binding.savePlaceMarkCard.isVisible = true
         }
 
         override fun onMapTap(map: Map, point: Point) = Unit
@@ -58,7 +69,6 @@ class MainFragment : Fragment(), UserLocationObjectListener {
     private val searchSessionListener = object : SearchListener {
         override fun onSearchResponse(response: Response) {
             val text = when {
-//                response.collection.children.firstOrNull()?.obj?.name != null -> response.collection.children.firstOrNull()?.obj?.name
                 response.collection.children.firstOrNull()?.obj?.descriptionText != null -> response.collection.children.firstOrNull()?.obj?.descriptionText
                 response.metadata.toponym?.name != null -> response.metadata.toponym?.name
                 else -> {
@@ -71,6 +81,7 @@ class MainFragment : Fragment(), UserLocationObjectListener {
                     placement = TextStyle.Placement.BOTTOM
                 }
             )
+            binding.name.text = text
         }
 
         override fun onSearchError(error: Error) {
@@ -113,6 +124,30 @@ class MainFragment : Fragment(), UserLocationObjectListener {
         userLocationLayer.isVisible = true
         userLocationLayer.setObjectListener(this)
 
+
+        binding.closeButton.setOnClickListener {
+            closePlaceMarkCard()
+        }
+
+        binding.saveButton.setOnClickListener {
+            viewModel.savePoint(
+                PlaceMark(
+                    0,
+                    Point(
+                        binding.latitude.text.toString().toDouble(),
+                        binding.longitude.text.toString().toDouble()
+                    ),
+                    binding.name.text.toString()
+                )
+            )
+            closePlaceMarkCard()
+        }
+
+        binding.favorite.setOnClickListener {
+            findNavController().navigate(R.id.action_mainFragment_to_placeMarkFragment)
+        }
+
+
         return binding.root
     }
 
@@ -148,6 +183,15 @@ class MainFragment : Fragment(), UserLocationObjectListener {
             searchOptions,
             searchSessionListener
         )
+    }
+
+    private fun closePlaceMarkCard() {
+        binding.savePlaceMarkCard.isVisible = false
+        placeMarkMapObject.setText("")
+        binding.name.text = ""
+        binding.longitude.text = ""
+        binding.latitude.text = ""
+        placeMarkMapObject.isVisible = false
     }
 
 }

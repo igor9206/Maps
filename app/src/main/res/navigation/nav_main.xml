@@ -9,5 +9,14 @@
         android:id="@+id/mainFragment"
         android:name="ru.netology.maps.fragment.MainFragment"
         android:label="fragment_main"
-        tools:layout="@layout/fragment_main" />
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainFragment_to_placeMarkFragment"
+            app:destination="@id/placeMarkFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/placeMarkFragment"
+        android:name="ru.netology.maps.fragment.PlaceMarkFragment"
+        android:label="fragment_place_mark"
+        tools:layout="@layout/fragment_place_mark" />
 </navigation>

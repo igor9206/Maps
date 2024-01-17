@@ -2,9 +2,12 @@ package ru.netology.maps
 
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.activityViewModels
 import com.yandex.mapkit.MapKitFactory
 import ru.netology.maps.databinding.ActivityMainBinding
+import ru.netology.maps.viewmodel.PlaceMarkViewModel
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding

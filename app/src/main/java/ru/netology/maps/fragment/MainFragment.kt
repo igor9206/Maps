@@ -8,9 +8,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKit
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -103,11 +101,6 @@ class MainFragment : Fragment(), UserLocationObjectListener {
         imageProvider = ImageProvider.fromResource(requireContext(), R.drawable.ic_add_location_24)
         placeMarkMapObject = mapView.map.mapObjects.addPlacemark()
 
-        mapView.map.move(
-            CameraPosition(Point(), 14f, 0f, 0f),
-            Animation(Animation.Type.SMOOTH, 2f),
-            Map.CameraCallback { }
-        )
 
         map.addInputListener(inputListener)
 
@@ -147,6 +140,31 @@ class MainFragment : Fragment(), UserLocationObjectListener {
             findNavController().navigate(R.id.action_mainFragment_to_placeMarkFragment)
         }
 
+
+        val id = arguments?.getLong("id")
+        if (id != null) {
+            val mark = viewModel.data.value?.let { list ->
+                list.firstOrNull {
+                    it.id == id
+                }
+            }
+
+            if (mark != null) {
+                map.move(
+                    CameraPosition(
+                        mark.point,
+                        14f,
+                        0f,
+                        0f
+                    )
+                )
+                placeMarkMapObject.geometry = mark.point
+                placeMarkMapObject.setIcon(imageProvider)
+                placeMarkMapObject.isVisible = true
+            }
+        }
+
+
         return binding.root
     }
 
@@ -166,6 +184,9 @@ class MainFragment : Fragment(), UserLocationObjectListener {
         userLocationLayer.setAnchor(
             PointF((mapView.width * 0.5).toFloat(), (mapView.height * 0.5).toFloat()),
             PointF((mapView.width * 0.5).toFloat(), (mapView.height * 0.83).toFloat())
+        )
+        map.move(
+            CameraPosition(userLocationView.arrow.geometry, 17f, 0f, 0f)
         )
     }
 

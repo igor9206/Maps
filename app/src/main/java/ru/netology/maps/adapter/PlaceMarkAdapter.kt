@@ -41,6 +41,10 @@ class PlaceMarkVH(
             longitude.text = placeMark.point.longitude.toString()
             latitude.text = placeMark.point.latitude.toString()
 
+            binding.cardPlaceMark.setOnClickListener {
+                onInteractionListener.openCardPost(placeMark)
+            }
+
             menuButton.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.placemark_options)

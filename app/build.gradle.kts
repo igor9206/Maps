@@ -45,8 +45,8 @@ dependencies {
     implementation("com.yandex.android:maps.mobile:4.4.0-full")
     implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation("com.google.code.gson:gson:2.10.1")
 
-    implementation("androidx.activity:activity-ktx:1.8.2")
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
